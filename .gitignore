@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Backups of repositories previously nested in this workspace
+/.git-backups/
+
 # Desktop: compiled output, installers and caches
 /desktop/dist/
 /desktop/dist-electron/
