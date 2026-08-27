@@ -1,0 +1,90 @@
+{
+  "name": "control-empleados-electron",
+  "version": "1.0.4",
+  "private": true,
+  "description": "Kiosko Electrónico - Electron",
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"tsc -p tsconfig.electron.json --watch\" \"wait-on tcp:5173 file:dist-electron/electron/main.js && electron .\"",
+    "build": "tsc -p tsconfig.electron.json && vite build",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.electron.json --noEmit",
+    "test": "npm run typecheck && npm run test:photo && npm run test:transfer && npm run test:receipt",
+    "test:photo": "tsc -p tsconfig.electron.json && node scripts/photo-enrollment-smoke.cjs",
+    "test:transfer": "node scripts/payroll-transfer-smoke.cjs",
+    "test:receipt": "tsc -p tsconfig.electron.json && node scripts/receipt-escpos-smoke.cjs",
+    "preview": "vite preview",
+    "package": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "@types/pako": "^2.0.4",
+    "bwip-js": "^4.11.4",
+    "mssql": "^10.0.4",
+    "pako": "^3.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^8.2.2",
+    "electron": "^43.4.1",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.sanmartin.control-empleados",
+    "productName": "Kiosko Electrónico",
+    "directories": {
+      "output": "release"
+    },
+    "asar": true,
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "public/audio",
+        "to": "audio"
+      },
+      {
+        "from": "public/app-icon.ico",
+        "to": "app-icon.ico"
+      },
+      {
+        "from": "public/app-icon.png",
+        "to": "app-icon.png"
+      },
+      {
+        "from": "config/kiosk.config.example.json",
+        "to": "config/kiosk.config.example.json"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "target": [
+        "AppImage"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}

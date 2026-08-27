@@ -1,0 +1,25 @@
+{
+  "database": {
+    "server": "170.0.1.247",
+    "database": "RRHH",
+    "user": "sa",
+    "password": "CAMBIAR_PASSWORD",
+    "port": 1433,
+    "encrypt": false,
+    "trustServerCertificate": true
+  },
+  "kiosk": {
+    "pcId": 1,
+    "photoDirectory": "C:\\\\Users\\\\Public\\\\Pictures\\\\Kiosko\\\\Fotos",
+    "timezone": "America/Managua",
+    "autoRegisterDelayMs": 250,
+    "confirmationDurationMs": 1500,
+    "faceMatchThreshold": 0.52,
+    "faceRequiredMatches": 3,
+    "receiptPrinterName": "EPSON TM-U220II Receipt",
+    "receiptPrinterModel": "TM-U220",
+    "receiptPaperWidthMm": 76,
+    "receiptSilentPrint": true,
+    "receiptRawCutPaper": true
+  }
+}
