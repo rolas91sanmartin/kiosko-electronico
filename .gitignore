@@ -17,6 +17,24 @@ node_modules/
 # Desktop: local kiosk configuration
 /desktop/config/kiosk.config.json
 
+# Kiosko API: generated output, deployment keys and logs
+/kiosko-api/dist/
+/kiosko-api/config/kiosk.config.json
+/kiosko-api/config/*private*.pem
+/kiosko-api/config/*public*.pem
+/kiosko-api/logs/
+
+# Kiosko Mobile: Expo and native build output. The Android source is tracked
+# because it contains the SAT KT21LC native hardware module.
+/kiosko-mobile/.expo/
+/kiosko-mobile/ios/
+/kiosko-mobile/dist/
+/kiosko-mobile/android/.gradle/
+/kiosko-mobile/android/.kotlin/
+/kiosko-mobile/android/build/
+/kiosko-mobile/android/app/build/
+/kiosko-mobile/android/local.properties
+
 # Mobile: Expo bundles and caches
 /mobile/.expo/
 /mobile/.expo-shared/

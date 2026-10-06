@@ -20,7 +20,7 @@ export function AttendanceScreen({ onOpenReports }: Props) {
   const [configured, setConfigured] = useState(true);
   const [paymentOpen, setPaymentOpen] = useState(() => new URLSearchParams(window.location.search).get('payment') === '1');
   const [photoEnrollmentOpen, setPhotoEnrollmentOpen] = useState(() => new URLSearchParams(window.location.search).get('photo') === '1');
-  const [settings, setSettings] = useState({ timezone: 'America/Guatemala', autoRegisterDelayMs: 250, confirmationDurationMs: 1500, faceMatchThreshold: 0.52, faceRequiredMatches: 3 });
+  const [settings, setSettings] = useState({ timezone: 'America/Guatemala', autoRegisterDelayMs: 250, confirmationDurationMs: 1500 });
 
   const focusScanner = useCallback(() => setTimeout(() => scanner.current?.focus(), 0), []);
   const reset = useCallback(() => {
@@ -129,7 +129,7 @@ export function AttendanceScreen({ onOpenReports }: Props) {
     <footer><span className="online-dot" />Sistema de asistencia activo</footer>
 
     {confirmation && <div className="confirmation-backdrop"><div className={`confirmation-card ${confirmation.toLowerCase()}`}><div className="confirmation-check"><CheckIcon /></div><h2>{confirmation === 'Entrada' ? '¡Bienvenido!' : '¡Adiós, buen viaje!'}</h2><p>{confirmation} registrada correctamente</p></div></div>}
-    {paymentOpen && <PaymentAuthenticationModal faceMatchThreshold={settings.faceMatchThreshold} faceRequiredMatches={settings.faceRequiredMatches} onClose={() => { setPaymentOpen(false); focusScanner(); }} />}
+    {paymentOpen && <PaymentAuthenticationModal onClose={() => { setPaymentOpen(false); focusScanner(); }} />}
     {photoEnrollmentOpen && <PhotoEnrollmentModal onClose={() => { setPhotoEnrollmentOpen(false); focusScanner(); }} />}
     {message && <Alert message={message} tone={configured ? 'error' : 'warning'} onClose={() => { setMessage(null); focusScanner(); }} />}
   </main>;

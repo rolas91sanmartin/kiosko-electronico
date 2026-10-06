@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Kiosko San Martín",
+    "slug": "kiosko-mobile",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.sanmartin.kiosko",
+      "versionCode": 1,
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "CAMERA",
+        "NFC"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "./plugins/withReleaseSigning.cjs",
+      "./plugins/withPlayUpdate.cjs",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permitir que Kiosko San Martín use la cámara.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Permitir autenticación biométrica para consultar comprobantes."
+        }
+      ],
+      "expo-secure-store",
+      "expo-screen-orientation",
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/brand-symbol.png",
+          "imageWidth": 260,
+          "resizeMode": "contain"
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+// Local upload credentials are intentionally excluded from version control.
+def credentialsFile = rootProject.file('../.signing/upload.properties')
+def credentials = new Properties()
+if (credentialsFile.exists()) {
+    credentialsFile.withInputStream { credentials.load(it) }
+}
+android.signingConfigs {
+    release {
+        if (credentialsFile.exists()) {
+            storeFile rootProject.file('../' + credentials.getProperty('storeFile'))
+            storePassword credentials.getProperty('storePassword')
+            keyAlias credentials.getProperty('keyAlias')
+            keyPassword credentials.getProperty('keyPassword')
+        }
+    }
+}
+android.buildTypes.release.signingConfig = android.signingConfigs.release
+tasks.matching { it.name == 'validateSigningRelease' }.configureEach {
+    doFirst {
+        if (!credentialsFile.exists()) {
+            throw new GradleException('Missing .signing/upload.properties. Configure the upload key before building release.')
+        }
+        ['storeFile', 'storePassword', 'keyAlias', 'keyPassword'].each {
+            if (!credentials.getProperty(it)) throw new GradleException('Missing signing property: ' + it)
+        }
+    }
+}
