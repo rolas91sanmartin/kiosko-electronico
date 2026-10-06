@@ -22,3 +22,13 @@ export function loadJsonConfiguration() {
     if (value !== undefined && value !== null) process.env[environment] = String(value);
   }
 }
+
+export function validateProductionConfiguration() {
+  if (process.env.NODE_ENV !== 'production') return;
+  const required = ['KIOSK_API_KEY', 'KIOSK_DB_SERVER', 'KIOSK_DB_NAME', 'KIOSK_DB_USER', 'KIOSK_DB_PASSWORD'];
+  const missing = required.filter(name => {
+    const value = process.env[name]?.trim();
+    return !value || value.startsWith('CAMBIAR_');
+  });
+  if (missing.length) throw new Error(`Configure las variables de producción: ${missing.join(', ')}`);
+}

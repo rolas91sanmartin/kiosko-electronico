@@ -27,7 +27,6 @@ export class KioskController {
     private readonly logs: PersistentLogService
   ) {}
 
-  @Get('health') health() { return { ok: true, service: 'kiosko-api' }; }
   @Get('auth/rrhh') @UseGuards(BasicAuthGuard) @AdminRoles('RRHH') rrhhAuth(@Req() request: Request & { admin?: AuthenticatedAdmin }) { return { authenticated: true, role: request.admin!.role, username: request.admin!.username }; }
   @Get('auth/ti-admin') @UseGuards(BasicAuthGuard) @AdminRoles('TI_ADMIN') tiAdminAuth(@Req() request: Request & { admin?: AuthenticatedAdmin }) { return { authenticated: true, role: request.admin!.role, username: request.admin!.username }; }
   @Get('app/configuration-status') async configuration() {
@@ -44,21 +43,21 @@ export class KioskController {
   @Post('attendance/register') async register(@Body() dto: RegisterDto) { await this.repository.register(dto.employeeCode, dto.movement); return { ok: true }; }
   @Post('payments/authenticate') authenticate(@Body() dto: BarcodeDto) { return this.service.employee(dto.barcode); }
   @Get('payments/payrolls') payrolls(@Query('page', new ParseIntPipe({ optional: true })) page = 1) { return this.repository.paymentPayrolls(page); }
-  @Get('payments/:employeeCode/:consecutive/envelope') envelope(@Param('employeeCode') employeeCode: string, @Param('consecutive', ParseIntPipe) consecutive: number) { return this.repository.paymentEnvelope(employeeCode, consecutive); }
-  @Post('payments/:employeeCode/:consecutive/print') async print(@Param('employeeCode') employeeCode: string, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: PayrollActionDto) {
-    const rows = await this.repository.paymentEnvelope(employeeCode, consecutive);
+  @Get('payments/:employeeCode/:payrollCode/:consecutive/envelope') envelope(@Param('employeeCode') employeeCode: string, @Param('payrollCode', ParseIntPipe) payrollCode: number, @Param('consecutive', ParseIntPipe) consecutive: number) { return this.repository.paymentEnvelope(employeeCode, consecutive, payrollCode); }
+  @Post('payments/:employeeCode/:payrollCode/:consecutive/print') async print(@Param('employeeCode') employeeCode: string, @Param('payrollCode', ParseIntPipe) payrollCode: number, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: PayrollActionDto) {
+    const rows = await this.repository.paymentEnvelope(employeeCode, consecutive, payrollCode);
     const result = await this.printer.print(rows, { consecutive, from: dto.from, to: dto.to, totalRecords: 1 });
-    await this.logs.write('payment.print', `${employeeCode}:${consecutive}`);
+    await this.logs.write('payment.print', `${employeeCode}:${payrollCode}:${consecutive}`);
     return result;
   }
-  @Post('payments/:employeeCode/:consecutive/email') async email(@Param('employeeCode') employeeCode: string, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: EmailReceiptDto) {
-    const rows = await this.repository.paymentEnvelope(employeeCode, consecutive);
+  @Post('payments/:employeeCode/:payrollCode/:consecutive/email') async email(@Param('employeeCode') employeeCode: string, @Param('payrollCode', ParseIntPipe) payrollCode: number, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: EmailReceiptDto) {
+    const rows = await this.repository.paymentEnvelope(employeeCode, consecutive, payrollCode);
     const result = await this.mail.sendReceipt(dto.email, rows, { consecutive, from: dto.from, to: dto.to, totalRecords: 1 });
-    await this.logs.write('payment.email', `${employeeCode}:${consecutive}:${dto.email}`);
+    await this.logs.write('payment.email', `${employeeCode}:${payrollCode}:${consecutive}:${dto.email}`);
     return result;
   }
-  @Post('payments/:employeeCode/:consecutive/transfer') async transfer(@Param('employeeCode') employeeCode: string, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: PayrollActionDto) {
-    const [employee, rows] = await Promise.all([this.service.employeeByCode(employeeCode), this.repository.paymentEnvelope(employeeCode, consecutive)]);
+  @Post('payments/:employeeCode/:payrollCode/:consecutive/transfer') async transfer(@Param('employeeCode') employeeCode: string, @Param('payrollCode', ParseIntPipe) payrollCode: number, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: PayrollActionDto) {
+    const [employee, rows] = await Promise.all([this.service.employeeByCode(employeeCode), this.repository.paymentEnvelope(employeeCode, consecutive, payrollCode)]);
     return this.transfers.create(employee, { consecutive, from: dto.from, to: dto.to, totalRecords: 1 }, rows);
   }
   @Post('photos/authenticate') photoAuth(@Body() dto: BarcodeDto) { return this.service.authorizePhoto(dto.barcode); }

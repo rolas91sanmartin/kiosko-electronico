@@ -92,11 +92,14 @@ export class SqlServerRepository implements OnModuleDestroy {
     return { periods: rows.map(row => ({ from: String(row.Fecha_Inicial ?? ''), to: String(row.Fecha_Final ?? ''), consecutive: Number(row.consecutivo_pla), totalRecords })).filter(p => Number.isInteger(p.consecutive)), page: safePage, pageSize, totalRecords };
   }
 
-  async paymentEnvelope(employeeCode: string, consecutive: number): Promise<PayrollEnvelopeRow[]> {
+  async paymentEnvelope(employeeCode: string, consecutive: number, payrollCode: number): 
+  Promise<PayrollEnvelopeRow[]> {
+    console.log('Fetching payment envelope for employee:', employeeCode, 'consecutive:', consecutive, 'payrollCode:', payrollCode);
     if (!/^\d{4}$/.test(employeeCode)) throw new Error('Código de empleado inválido.');
     if (!Number.isInteger(consecutive) || consecutive <= 0) throw new Error('Planilla inválida.');
     const result = await (await this.connection()).request()
-      .input('_cCod_nomina', sql.Int, 1).input('_ConsecPlani', sql.Int, consecutive)
+      .input('_cCod_nomina', sql.Int, payrollCode)
+      .input('_ConsecPlani', sql.Int, consecutive)
       .input('tabDeven', sql.VarChar(100), 'Hist_devengados').input('tabdeducc', sql.VarChar(100), 'Hist_deduccion')
       .input('tabhextra', sql.VarChar(100), 'Hist_HorasExtras').input('HorasNoLab', sql.VarChar(100), 'Hist_HoraNoLaborada')
       .input('Subsdio', sql.VarChar(100), 'Hist_Subsidio').input('vcorreo', sql.Int, 0)

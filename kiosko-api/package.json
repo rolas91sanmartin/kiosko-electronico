@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nest start",
+    "start:prod": "node dist/main.js",
+    "test:deploy": "npm run build && node scripts/smoke-test.cjs",
     "start:dev": "nest start --watch",
     "build": "nest build",
     "typecheck": "tsc --noEmit",

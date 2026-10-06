@@ -6,13 +6,15 @@ import { json, urlencoded } from 'express';
 import { static as serveStatic } from 'express';
 import * as path from 'node:path';
 import { AppModule } from './app.module';
-import { loadJsonConfiguration } from './configuration';
+import { loadJsonConfiguration, validateProductionConfiguration } from './configuration';
 import { PersistentExceptionFilter } from './common/persistent-exception.filter';
 import { PersistentLogService } from './kiosk/persistent-log.service';
 
 async function bootstrap() {
   loadJsonConfiguration();
+  validateProductionConfiguration();
   const app = await NestFactory.create(AppModule, { bodyParser: false });
+  app.enableShutdownHooks();
   app.use(json({ limit: '12mb' }));
   app.use(urlencoded({ extended: true, limit: '12mb' }));
   app.setGlobalPrefix('api');

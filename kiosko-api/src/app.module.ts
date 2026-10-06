@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { HealthController } from './health.controller';
 import { ApiKeyGuard } from './common/api-key.guard';
 import { BasicAuthGuard } from './common/basic-auth.guard';
 import { KioskController } from './kiosk/kiosk.controller';
@@ -13,7 +14,7 @@ import { ReceiptPrinterService } from './kiosk/receipt-printer.service';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true })],
-  controllers: [KioskController],
+  controllers: [HealthController, KioskController],
   providers: [ApiKeyGuard, BasicAuthGuard, KioskService, PhotoService, SqlServerRepository, MailService, PayrollTransferService, PersistentLogService, ReceiptPrinterService]
 })
 export class AppModule {}
