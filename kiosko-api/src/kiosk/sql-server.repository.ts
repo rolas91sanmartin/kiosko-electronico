@@ -79,11 +79,11 @@ export class SqlServerRepository implements OnModuleDestroy {
     } catch (error) { await transaction.rollback(); throw error; }
   }
 
-  async paymentPayrolls(page: number) {
+  async paymentPayrolls(page: number, payrollCode: number) {
     const safePage = Number.isInteger(page) && page > 0 ? page : 1;
     const pageSize = 5;
     const result = await (await this.connection()).request()
-      .input('OpcionOperacion', sql.Int, 4).input('_cCod_nomina', sql.Int, 1)
+      .input('OpcionOperacion', sql.Int, 4).input('_cCod_nomina', sql.Int, payrollCode)
       .input('_ConsecPlani', sql.Int, 1).input('Pagina', sql.Int, safePage)
       .input('CantidadPorPagina', sql.Int, pageSize).input('tabDeven', sql.VarChar(100), 'mov_devengados')
       .input('tabdeducc', sql.VarChar(100), 'mov_deducciones').execute('Estadisticas');

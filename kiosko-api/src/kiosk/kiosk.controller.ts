@@ -42,7 +42,7 @@ export class KioskController {
   @Post('attendance/lookup') lookup(@Body() dto: BarcodeDto) { return this.service.attendanceLookup(dto.barcode); }
   @Post('attendance/register') async register(@Body() dto: RegisterDto) { await this.repository.register(dto.employeeCode, dto.movement); return { ok: true }; }
   @Post('payments/authenticate') authenticate(@Body() dto: BarcodeDto) { return this.service.employee(dto.barcode); }
-  @Get('payments/payrolls') payrolls(@Query('page', new ParseIntPipe({ optional: true })) page = 1) { return this.repository.paymentPayrolls(page); }
+  @Get('payments/payrolls') payrolls(@Query('page', new ParseIntPipe({ optional: true })) page = 1, @Query('payrollCode', ParseIntPipe) payrollCode: number) { return this.repository.paymentPayrolls(page, payrollCode); }
   @Get('payments/:employeeCode/:payrollCode/:consecutive/envelope') envelope(@Param('employeeCode') employeeCode: string, @Param('payrollCode', ParseIntPipe) payrollCode: number, @Param('consecutive', ParseIntPipe) consecutive: number) { return this.repository.paymentEnvelope(employeeCode, consecutive, payrollCode); }
   @Post('payments/:employeeCode/:payrollCode/:consecutive/print') async print(@Param('employeeCode') employeeCode: string, @Param('payrollCode', ParseIntPipe) payrollCode: number, @Param('consecutive', ParseIntPipe) consecutive: number, @Body() dto: PayrollActionDto) {
     const rows = await this.repository.paymentEnvelope(employeeCode, consecutive, payrollCode);
